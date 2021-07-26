@@ -1,24 +1,26 @@
 use crate::ports;
 use crossbeam_utils::thread;
-use std::net::{Ipv4Addr, Shutdown, TcpStream};
+use std::net::{IpAddr, Shutdown, TcpStream, SocketAddr};
+use std::time::Duration;
 
 pub struct PortScanner {
-    ip: Ipv4Addr,
+    ip: IpAddr,
 }
 
 impl PortScanner {
     pub fn new(ip: &str) -> PortScanner {
         PortScanner {
-            ip: ip.parse::<Ipv4Addr>().expect("Invalid IP address"),
+            ip: ip.parse::<IpAddr>().expect("Invalid IP address"),
         }
     }
 
     pub fn scan_ports(&self) {
         thread::scope (|s| {
             s.spawn (move |_| {
-                for port in ports::TCP {
-                    let ip = format!("{}:{}", &self.ip, &port);
-                    if let Ok(stream) = TcpStream::connect(ip) {
+                for &port in ports::TCP {
+                    let socket = SocketAddr::new(self.ip, port);
+                    let timeout = Duration::new(2, 0);
+                    if let Ok(stream) = TcpStream::connect_timeout(&socket, timeout) {
                         println!("OPEN -> {}", port);
                         stream.shutdown(Shutdown::Both).expect("Exiting");
                     }
