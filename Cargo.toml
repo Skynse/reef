@@ -9,6 +9,7 @@ edition = "2018"
 clap = "2.33.3"
 regex = "1.5"
 crossbeam-utils = "0.8.5"
+pnet = "0.28.0"
 
 [[bin]]
 name = "reef"

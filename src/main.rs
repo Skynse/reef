@@ -19,7 +19,7 @@ fn main() {
                     if ip_regex.is_match(&x) {
                         Ok(())
                     } else {
-                        Err(format!("Invalid IPv4 Address"))
+                        Err("Invalid IPv4 Address".to_string())
                     }
                 }),
         )
@@ -34,6 +34,8 @@ fn main() {
     if matches.is_present("pscan") {
         let ip = matches.value_of("pscan").unwrap();
         let ip_obj = scanner::PortScanner::new(ip);
-        ip_obj.scan_ports();
+        ip_obj.run();
     }
+let ipscanner = scanner::IPScanner{};
+ipscanner.run();
 }
